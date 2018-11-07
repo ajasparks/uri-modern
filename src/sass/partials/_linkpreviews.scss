@@ -1,0 +1,28 @@
+/* ==============================
+   LINK PREVIEWS
+   ============================== */
+
+#link-preview-container {
+	
+	display: none;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	max-width: 300px;
+	z-index: 8000;
+	padding: 1rem;
+	background: #fff;
+	box-shadow: $level2;
+	
+	&.visible,
+	&:hover {
+		display: block;
+	}
+	
+	img {
+		width: 100%;
+		height: auto;
+	}
+	
+}
