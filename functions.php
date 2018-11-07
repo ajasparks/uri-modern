@@ -566,6 +566,11 @@ require get_template_directory() . '/inc/shortcodes.php';
 require get_template_directory() . '/inc/wysiwyg.php';
 
 /**
+ * Link previews.
+ */
+require get_template_directory() . '/inc/link-previews.php';
+
+/**
  * Load Jetpack compatibility file.
  */
 require get_template_directory() . '/inc/jetpack.php';
