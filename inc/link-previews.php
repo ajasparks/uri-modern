@@ -5,28 +5,32 @@
  * @package uri-modern
  */
 
-add_action(
-	 'rest_api_init',
-	function () {
+/**
+ * Register a new API route
+ */
+function uri_modern_register_rest_route_get_post_by_path() {
 
-register_rest_route(
-	   'uri-modern/',
-	  'getIDByPath',
-	  array(
-		  'methods' => 'GET',
-		  'callback' => 'uri_modern_get_id_by_path',
-		  'args' => array(
-			  'path' => array(
-				  'required' => false,
-			  ),
-		  ),
-	  )
-	  );
-
-}
+	register_rest_route(
+		'uri-modern/',
+		'getPostByPath',
+		array(
+			'methods' => 'GET',
+			'callback' => 'uri_modern_get_post_by_path',
+			'args' => array(
+				'path' => array(
+					'required' => false,
+				),
+			),
+		)
 	);
 
-function uri_modern_get_id_by_path( WP_REST_Request $request ) {
+}
+add_action( 'rest_api_init', 'uri_modern_register_rest_route_get_post_by_path' );
+
+/**
+ * The callback for the API route
+ */
+function uri_modern_get_post_by_path( WP_REST_Request $request ) {
 
 	$id = url_to_postid( $request['path'] );
 	$data = array(

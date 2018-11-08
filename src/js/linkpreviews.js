@@ -15,22 +15,27 @@
 	function initLinkPreviews() {
 
 		var links, content, i, key;
-		
+
 		// Add the popup container div
 		popup = document.createElement( 'div' );
 		popup.id = 'link-preview-container';
 		document.getElementById( 'content' ).appendChild( popup );
 
 		// Get the links in the first .entry-content
-		content = document.querySelector( '.entry-content' );
-		links = content.querySelectorAll( 'a' );
+		content = document.querySelectorAll( '.entry-content' );
+		links = [];
+		// @todo: fix this so it concats links for all content blocks
+		for ( i = 0; i < content.length; i++ ) {
+			links = content[i].querySelectorAll( 'a' );
+		}
+
+		console.log( links );
 
 		// Set ids and add event listeners
 		for ( i = 0; i < links.length; i++ ) {
 			links[i].addEventListener( 'mouseover', handleHover.bind( null, links[i] ), false );
 			links[i].addEventListener( 'mouseout', handleOut, false );
 		}
-
 	}
 
 	function fetch( url, success, el ) {
@@ -53,12 +58,12 @@
 
 	function handleHover( el ) {
 
-		var path, url;
+		var path, url, base;
 
 		path = el.getAttribute( 'href' );
-		url = URIMODERN.base + '/wp-json/uri-modern/getIDByPath?path=' + path;
-		//console.log( url );
 
+		url = URIMODERN.base + '/wp-json/uri-modern/getPostByPath?path=' + path;
+		// console.log( url );
 		fetch( url, makePopUp, el )
 
 	}
@@ -68,15 +73,14 @@
 		var data, x, y, content;
 
 		data = JSON.parse( raw );
-		//console.log( data );
-		
+		// console.log( data );
 		if ( 0 == data.id ) {
 			return;
 		}
 
 		x = el.offsetTop;
 		y = el.offsetLeft;
-		
+
 		content = data.thumb + '<div>' + data.excerpt + '</div>';
 
 		popup.innerHTML = content;
@@ -91,5 +95,5 @@
 		popup.className = 'hidden';
 
 	}
-
-})();
+}
+				)();
