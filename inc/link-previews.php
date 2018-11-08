@@ -5,29 +5,38 @@
  * @package uri-modern
  */
 
-function uri_modern_get_page_content_links( $content ) {
+add_action(
+	 'rest_api_init',
+	function () {
 
-	$dom = new DOMDocument;
-	@$dom->loadHTML( $GLOBALS['post']->post_content );
-	$links = $dom->getElementsByTagName( 'a' );
-
-	$a = array();
-
-	foreach ( $links as $link ) {
-		$id = uniqid();
-		$url = $link->getAttribute( 'href' );
-		$postID = url_to_postid( $url );
-		$a[ $id ] = array(
-			'url' => $url,
-			'postID' => $postID,
-			'title' => get_the_title( $postID ),
-			'thumb' => get_the_post_thumbnail( $postID ),
-			// 'excerpt' => get_the_excerpt( $postID ),
-		);
-	}
-
-	wp_localize_script( 'uri-modern-scripts', 'URIMODERN_LINKS', $a );
-	return $content;
+register_rest_route(
+	   'uri-modern/',
+	  'getIDByPath',
+	  array(
+		  'methods' => 'GET',
+		  'callback' => 'uri_modern_get_id_by_path',
+		  'args' => array(
+			  'path' => array(
+				  'required' => false,
+			  ),
+		  ),
+	  )
+	  );
 
 }
-add_filter( 'the_content', 'uri_modern_get_page_content_links' );
+	);
+
+function uri_modern_get_id_by_path( WP_REST_Request $request ) {
+
+	$id = url_to_postid( $request['path'] );
+	$data = array(
+		'id' => $id,
+		'type' => get_post_type( $id ),
+		'excerpt' => get_the_excerpt( $id ),
+		'thumb' => get_the_post_thumbnail( $id ),
+	);
+
+	$response = new WP_REST_Response( $data );
+	return $response;
+
+}

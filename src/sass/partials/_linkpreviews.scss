@@ -11,7 +11,6 @@
 	width: 100%;
 	max-width: 300px;
 	z-index: 8000;
-	padding: 1rem;
 	background: #fff;
 	box-shadow: $level2;
 	
@@ -23,6 +22,13 @@
 	img {
 		width: 100%;
 		height: auto;
+	}
+	
+	div {
+		padding: 1rem;
+		line-height: 1.4rem;
+		font-size: 1rem;
+		color: #333;
 	}
 	
 }

@@ -15,9 +15,7 @@
 	function initLinkPreviews() {
 
 		var links, content, i, key;
-
-		console.log( URIMODERN_LINKS );
-
+		
 		// Add the popup container div
 		popup = document.createElement( 'div' );
 		popup.id = 'link-preview-container';
@@ -28,33 +26,60 @@
 		links = content.querySelectorAll( 'a' );
 
 		// Set ids and add event listeners
-		i = 0;
-		for ( key in URIMODERN_LINKS ) {
-			//links[i].setAttribute( 'data-preview-id', key );
-			links[i].addEventListener( 'mouseover', handleHover.bind( null, links[i], key ), false );
+		for ( i = 0; i < links.length; i++ ) {
+			links[i].addEventListener( 'mouseover', handleHover.bind( null, links[i] ), false );
 			links[i].addEventListener( 'mouseout', handleOut, false );
-			i++;
 		}
-
-		console.log( links );
 
 	}
 
-	function handleHover( el, id ) {
+	function fetch( url, success, el ) {
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function() {
+			if ( xmlhttp.readyState == XMLHttpRequest.DONE ) {
+				if ( 200 == xmlhttp.status ) {
+					success( el, xmlhttp.responseText );
+				} else if ( 404 == xmlhttp.status ) {
+					console.log( 'error 404 was returned' );
+				} else {
+					console.log( 'something else other than 200 or 404 was returned' );
+				}
+			}
+		};
 
-		var img, title, x, y;
+		xmlhttp.open( 'GET', url, true );
+		xmlhttp.send();
+	}
+
+	function handleHover( el ) {
+
+		var path, url;
+
+		path = el.getAttribute( 'href' );
+		url = URIMODERN.base + '/wp-json/uri-modern/getIDByPath?path=' + path;
+		//console.log( url );
+
+		fetch( url, makePopUp, el )
+
+	}
+
+	function makePopUp( el, raw ) {
+
+		var data, x, y, content;
+
+		data = JSON.parse( raw );
+		//console.log( data );
 		
-		if ( 0 == URIMODERN_LINKS[id]['postID'] ) {
+		if ( 0 == data.id ) {
 			return;
 		}
 
 		x = el.offsetTop;
 		y = el.offsetLeft;
+		
+		content = data.thumb + '<div>' + data.excerpt + '</div>';
 
-		img = URIMODERN_LINKS[id]['thumb'];
-		title = URIMODERN_LINKS[id]['title'];
-
-		popup.innerHTML = img + '<br >' + title;
+		popup.innerHTML = content;
 		popup.style.left = y + 'px';
 		popup.style.top = 'calc( 4rem + ' + x + 'px)';
 		popup.className = 'visible';
